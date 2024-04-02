@@ -25,7 +25,8 @@ svg {
 }
 
 path.link {
-  stroke: #2593B8 !important;
+  stroke: #2593B8;
+  fill: none;
   stroke-width: 1.5px;
 }
 
@@ -153,4 +154,57 @@ img {
 
 .path-contain input:first-child {
   margin-right: 10px;
+}
+
+.customize {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background-color: #545454;
+  padding: 20px;
+  border-bottom-left-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+}
+
+.customize h3 {
+  margin: 0 0 15px;
+  color: #F3F3FF;
+}
+
+.customize label {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.customize label input {
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.customize span {
+  white-space: nowrap;
+}
+
+.customize span, .customize input {
+  width: 50%;
+}
+
+.cancel {
+  background-color: #c70033;
+  transition-duration: 200ms;
+}
+
+.cancel:hover {
+  background-color: #c70033;
+  cursor: pointer;
+}
+
+input[type="color"] {
+  padding: 0;
+  outline: none;
+  border-radius: unset;
+  margin: unset;
 }

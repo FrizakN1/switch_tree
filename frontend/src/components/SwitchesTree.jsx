@@ -1,10 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
-import 'react-tree-graph/dist/style.css'
+// import 'react-tree-graph/dist/style.css'
 import {AnimatedTree} from "react-tree-graph";
-import {logDOM} from "@testing-library/react";
 import SwitchCreate from "./SwitchCreate";
 import PasswordSet from "./PasswordSet";
 import FetchRequest from "../fetchRequest";
+import Customize from "./Customize";
 
 const SwitchesTree = () => {
     const [tree, setTree] = useState({})
@@ -14,9 +14,7 @@ const SwitchesTree = () => {
     const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
     const [pad, setPad] = useState(0)
     const [scale, setScale] = useState(1)
-    const isFirst = useRef(true)
     const [filter, setFilter] = useState("")
-    const [fontSize, setFontSize] = useState(16)
     const [isOpenCreate, setIsOpenCreate] = useState(false)
     const [isOpenPassword, setIsOpenPassword] = useState(false)
     const [passwordExist, setPasswordExist] = useState(false)
@@ -24,6 +22,13 @@ const SwitchesTree = () => {
     const [pathSwitch, setPathSwitch] = useState({
         PathSwitch1: "",
         PathSwitch2: "",
+    })
+    const [isOpenParam, setIsOpenParam] = useState(false)
+    const [param, setParam] = useState({
+        FontSize: 16,
+        FontColor: "#F4F4F4",
+        BackgroundColor: "#242424",
+        LineColor: "#2593B8"
     })
 
     const size = {
@@ -105,9 +110,6 @@ const SwitchesTree = () => {
     }
 
     const handlerOnClick = (event, name) => {
-        // setScale(1)
-        // setPosition({x: 0, y: -3000})
-
         let rootTree = tree
         if (filter !== "") {
             rootTree = filterTree(tree, filter)
@@ -130,6 +132,23 @@ const SwitchesTree = () => {
     }
 
     useEffect(() => {
+        let updatedParam = {...param}
+
+        if (localStorage.getItem("FontSize")) {
+            updatedParam.FontSize = localStorage.getItem("FontSize")
+        }
+        if (localStorage.getItem("FontColor")) {
+            updatedParam.FontColor = localStorage.getItem("FontColor")
+        }
+        if (localStorage.getItem("BackgroundColor")) {
+            updatedParam.BackgroundColor = localStorage.getItem("BackgroundColor")
+        }
+        if (localStorage.getItem("LineColor")) {
+            updatedParam.LineColor = localStorage.getItem("LineColor")
+        }
+
+        setParam(updatedParam)
+
         if (localStorage.getItem("password")) {
             if (Number(localStorage.getItem("password-date-set")) < new Date().getTime()) {
                 localStorage.removeItem("password")
@@ -153,14 +172,14 @@ const SwitchesTree = () => {
         const handleWheel = (event) => {
             if (event.deltaY > 0) {
                 setScale(prevState => {
-                    if (prevState-0.02 > 0.2) {
-                        return prevState-0.02
+                    if (prevState-0.04 > 0.2) {
+                        return prevState-0.04
                     }
 
                     return prevState
                 })
             } else {
-                setScale(prevState => prevState+0.02)
+                setScale(prevState => prevState+0.04)
             }
         }
 
@@ -213,18 +232,6 @@ const SwitchesTree = () => {
             }
         } else {
             setShownTree(tree)
-        }
-    }
-
-    const changeFontSize = (event) => {
-        let newFontSize = event.target.value
-
-        if (newFontSize < 0) {
-            setFontSize(0)
-        } else if (newFontSize > 72) {
-            setFontSize(72)
-        } else {
-            setFontSize(newFontSize)
         }
     }
 
@@ -317,6 +324,10 @@ const SwitchesTree = () => {
         setShownTree(pathTree(tree, pathSwitch.PathSwitch1, pathSwitch.PathSwitch2))
     }
 
+    useEffect(() => {
+        document.querySelector("#root").style.backgroundColor = param.BackgroundColor
+    }, [param])
+
     return (
         <div>
             {isOpenCreate && <SwitchCreate setIsOpen={setIsOpenCreate} />}
@@ -350,10 +361,7 @@ const SwitchesTree = () => {
                     <button onClick={() => setIsSearchPath(true)}>Поиск пути</button>
                 }
                 <div className="param">
-                    <label>
-                        <span>Размер шрифта:</span>
-                        <input type="number" value={fontSize} onChange={changeFontSize}/>
-                    </label>
+                    <button onClick={() => setIsOpenParam(true)}>Кастомизация карты</button>
                     {passwordExist ?
                         <div>
                             <button onClick={() => setIsOpenCreate(true)}>Добавить корневой коммутатор</button>
@@ -363,9 +371,10 @@ const SwitchesTree = () => {
                         <button onClick={() => setIsOpenPassword(true)}><img src="/key.svg" alt=""/></button>
                     }
                 </div>
+                {isOpenParam && <Customize param={param} setParam={setParam} setIsOpen={setIsOpenParam}/>}
             </header>
             <div className={"tree-container"}
-                 style={{left: position.x + 'px', top: position.y + 'px', width: size.width+pad, transform: `scale(${scale})`, fontSize: `${fontSize}px`}}
+                 style={{left: position.x + 'px', top: position.y + 'px', width: size.width+pad, transform: `scale(${scale})`, fontSize: `${param.FontSize}px`}}
                  onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp} onMouseUp={handleMouseUp}
             >
                 <AnimatedTree
@@ -378,6 +387,13 @@ const SwitchesTree = () => {
                         r: 2,
                     }}
 
+                    pathProps={{
+                        style: {stroke: param.LineColor}
+                    }}
+
+                    textProps={{
+                        style: {fill: param.FontColor}
+                    }}
                     height={size.height}
                     width={size.width}
                     steps={30}
