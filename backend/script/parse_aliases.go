@@ -22,7 +22,7 @@ type Mac struct {
 func main() {
 	aliases := make(map[string]Mac)
 
-	err := filepath.Walk("../aliases", func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk("../aliases/vlan1", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}

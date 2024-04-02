@@ -55,16 +55,16 @@ func Initialization(_config *settings.Setting) *gin.Engine {
 		}
 	})
 
-	routerTree := router.Group("/switches_tree")
+	routerAPI := router.Group("/api")
 
-	routerTree.POST("/check_password", handlerCheckPassword)
-	routerTree.GET("/get_tree", handlerGetTree)
+	routerAPI.POST("/check_password", handlerCheckPassword)
+	routerAPI.GET("/get_tree", handlerGetTree)
 
-	routerTree.Use(authMiddleware())
+	routerAPI.Use(authMiddleware())
 
-	//routerTree.GET("/get_tree", handlerGetTree)
-	routerTree.POST("/create_root_switch", handlerCreateRootSwitch)
-	routerTree.GET("/build_tree", handlerBuildTree)
+	//routerAPI.GET("/get_tree", handlerGetTree)
+	routerAPI.POST("/create_root_switch", handlerCreateRootSwitch)
+	routerAPI.GET("/build_tree", handlerBuildTree)
 
 	return router
 }
