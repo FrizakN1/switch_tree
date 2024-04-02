@@ -1,0 +1,11 @@
+{
+  "Address": "localhost",
+  "Port": "8080",
+  "DbHost": "127.0.0.1",
+  "DbPort": "5432",
+  "DbUser": "postgres",
+  "DbPass": "1234",
+  "DbName": "switches_tree",
+  "AllowOrigin": "http://localhost:3000",
+  "AdminPassword": "Cbkmrf12/5"
+}

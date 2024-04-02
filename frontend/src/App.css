@@ -1,0 +1,162 @@
+
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.node circle {
+  fill: #F3F3FF !important;
+  stroke: #2593B8 !important;
+  stroke-width: 1.5px;
+}
+
+svg {
+  overflow: unset;
+}
+
+.node text {
+  background-color: #444;
+  fill: #F4F4F4;
+  font-weight: bold;
+  user-select: none;
+}
+
+.node {
+  cursor: pointer;
+}
+
+.node.searchIncluded text {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.node.searchExcluded text {
+  opacity: 0.6;
+}
+
+path.link {
+  stroke: #2593B8 !important;
+  stroke-width: 1.5px;
+}
+
+#root {
+  background-color: #242424;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+span {
+  color: #F4F4F4;
+  float: right;
+}
+
+input {
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 50px;
+}
+
+input:focus {
+  outline: none;
+}
+
+a, button {
+  background-color: #337ab7;
+  border: 0;
+  color: white;
+  font-size: 14px;
+  text-decoration: none;
+  margin-left: 8px;
+  padding: 5px 12px;
+  border-radius: 50px;
+  transition-duration: 200ms;
+}
+
+a:hover, button:hover {
+  background-color: #265a88;
+  cursor: pointer;
+}
+
+.tree-container {
+  overflow: auto;
+  position: absolute;
+  cursor: grab;
+  border: 1px solid white;
+  border-radius: 30px;
+  padding: 1000px;
+}
+
+header {
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 50px;
+  background-color: #444;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+header .param {
+  display: flex;
+}
+
+label {
+  display: flex;
+  align-items: center;
+}
+
+label span {
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+label input {
+  width: 60px;
+}
+
+.modal-window {
+  z-index: 1000;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0,0,0,0.3);
+}
+
+.modal-window .form {
+  padding: 30px 60px;
+  border-radius: 10px;
+  background-color: #444444;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-window .form label {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.modal-window .form label span {
+  white-space: nowrap;
+}
+
+.modal-window .form label input {
+  width: 100%;
+}
+
+img {
+  height: 20px;
+}
