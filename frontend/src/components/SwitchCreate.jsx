@@ -33,7 +33,7 @@ const SwitchCreate = ({setIsOpen}) => {
 
             console.log(options)
 
-            fetch("http://localhost:8080/switches_tree/create_root_switch", options)
+            fetch(API_DOMAIN.HTTP+"/create_root_switch", options)
                 .then(response => response.json())
                 .then(data => {
                     if (data) {

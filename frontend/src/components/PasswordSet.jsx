@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import API_DOMAIN from "../config";
 
 const PasswordSet = ({setIsOpen, setPasswordExist}) => {
     const [password, setPassword] = useState("")
@@ -15,10 +16,10 @@ const PasswordSet = ({setIsOpen, setPasswordExist}) => {
             body: JSON.stringify(String(password))
         }
 
-        fetch("http://localhost:8080/switches_tree/check_password", options)
+
+        fetch(API_DOMAIN.HTTP+"/check_password", options)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 if (data) {
                     localStorage.setItem("password", data)
                     localStorage.setItem("password-date-set", String(new Date().getTime()+1800000))
