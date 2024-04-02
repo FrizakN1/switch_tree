@@ -274,7 +274,7 @@ const SwitchesTree = () => {
             {isOpenPassword && <PasswordSet setIsOpen={setIsOpenPassword} setPasswordExist={setPasswordExist} />}
             <header>
                 <div>
-                    <input type="text" placeholder="Поиск..." onChange={onInputChange}/>
+                    <input type="text" placeholder="Поиск..." onChange={onInputChange} value={filter}/>
                     <button onClick={() => {
                         setShownTree(tree)
                         setFilter("")
