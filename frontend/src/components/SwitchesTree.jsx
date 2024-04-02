@@ -275,7 +275,10 @@ const SwitchesTree = () => {
             <header>
                 <div>
                     <input type="text" placeholder="Поиск..." onChange={onInputChange}/>
-                    <button onClick={() => setShownTree(tree)}>Сброс</button>
+                    <button onClick={() => {
+                        setShownTree(tree)
+                        setFilter("")
+                    }}>Сброс</button>
                 </div>
                 <div className="param">
                     <label>
