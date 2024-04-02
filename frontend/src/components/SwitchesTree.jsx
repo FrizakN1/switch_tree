@@ -20,6 +20,11 @@ const SwitchesTree = () => {
     const [isOpenCreate, setIsOpenCreate] = useState(false)
     const [isOpenPassword, setIsOpenPassword] = useState(false)
     const [passwordExist, setPasswordExist] = useState(false)
+    const [isSearchPath, setIsSearchPath] = useState(false)
+    const [pathSwitch, setPathSwitch] = useState({
+        PathSwitch1: "",
+        PathSwitch2: "",
+    })
 
     const size = {
         width: 4000 - pad,
@@ -196,7 +201,7 @@ const SwitchesTree = () => {
     }
 
     function onInputChange(event) {
-        const inputValue = event.target.value.trim();
+        const inputValue = event.target.value;
         setFilter(inputValue)
         if (inputValue !== "") {
             // filteredObjects = {name: "Root", children: filterTree(tree, inputValue)};
@@ -268,6 +273,50 @@ const SwitchesTree = () => {
             })
     }
 
+    const handlerChangePathSwitch = (event) => {
+        const { name, value } = event.target
+
+        setPathSwitch(prevState => {
+            return {...prevState, [name]: value}
+        })
+    }
+
+    const pathTree = (node, switch1, switch2) => {
+        if (node.name.toLowerCase().includes(switch1.toLowerCase()) || node.name.toLowerCase().includes(switch2.toLowerCase())) {
+            return {
+                name: node.name,
+                children: []
+            }
+        } else if (node.children) {
+            let filteredNode = {
+                name: node.name,
+                children: [],
+            }
+
+            let foundSomething = false
+
+            for (const child of node.children) {
+                const result = pathTree(child, switch1, switch2);
+                if (result) {
+                    foundSomething = true
+                    filteredNode.children.push(result);
+                }
+            }
+
+            if (foundSomething) {
+                return filteredNode
+            }
+
+            return null
+        } else {
+            return null
+        }
+    }
+
+    const searchPath = () => {
+        setShownTree(pathTree(tree, pathSwitch.PathSwitch1, pathSwitch.PathSwitch2))
+    }
+
     return (
         <div>
             {isOpenCreate && <SwitchCreate setIsOpen={setIsOpenCreate} />}
@@ -278,8 +327,28 @@ const SwitchesTree = () => {
                     <button onClick={() => {
                         setShownTree(tree)
                         setFilter("")
+                        setPathSwitch({
+                            PathSwitch1: "",
+                            PathSwitch2: "",
+                        })
+                        setIsSearchPath(false)
+                        setScale(1)
+                        setPosition({x: -1000, y: -3000})
                     }}>Сброс</button>
+                    <button onClick={() => {
+                        setScale(1)
+                        setPosition({x: -1000, y: -3000})
+                    }}>Переместить камеру к корню</button>
                 </div>
+                {isSearchPath ?
+                    <div className="path-contain">
+                        <input type="text" name="PathSwitch1" placeholder="Коммутатор 1" value={pathSwitch.PathSwitch1} onChange={handlerChangePathSwitch}/>
+                        <input type="text" name="PathSwitch2" placeholder="Коммутатор 2" value={pathSwitch.PathSwitch2} onChange={handlerChangePathSwitch}/>
+                        <button onClick={searchPath}>Поиск</button>
+                    </div>
+                    :
+                    <button onClick={() => setIsSearchPath(true)}>Поиск пути</button>
+                }
                 <div className="param">
                     <label>
                         <span>Размер шрифта:</span>

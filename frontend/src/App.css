@@ -17,21 +17,11 @@ svg {
 .node text {
   background-color: #444;
   fill: #F4F4F4;
-  font-weight: bold;
   user-select: none;
 }
 
 .node {
   cursor: pointer;
-}
-
-.node.searchIncluded text {
-  font-weight: bold;
-  font-size: 12px;
-}
-
-.node.searchExcluded text {
-  opacity: 0.6;
 }
 
 path.link {
@@ -159,4 +149,8 @@ label input {
 
 img {
   height: 20px;
+}
+
+.path-contain input:first-child {
+  margin-right: 10px;
 }
