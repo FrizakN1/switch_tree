@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import API_DOMAIN from "../config";
 
 const SwitchCreate = ({setIsOpen}) => {
     const [data, setData] = useState({
