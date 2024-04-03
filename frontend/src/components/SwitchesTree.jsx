@@ -5,8 +5,6 @@ import SwitchCreate from "./SwitchCreate";
 import PasswordSet from "./PasswordSet";
 import FetchRequest from "../fetchRequest";
 import Customize from "./Customize";
-import {logDOM} from "@testing-library/react";
-import NodeTitle from "./NodeTitle";
 
 const SwitchesTree = () => {
     const [tree, setTree] = useState({})
@@ -335,31 +333,6 @@ const SwitchesTree = () => {
     useEffect(() => {
         document.querySelector("#root").style.backgroundColor = param.BackgroundColor
     }, [param])
-
-    const test = {
-        name: "Parent",
-        label: "String",
-        children: [
-            {
-                label: (
-                    <foreignObject y={-13} width="200" height="180" style={{display: "flex", justifyContent: "flex-start"}}>
-                        <span title={"123 \n123"}>Туту</span>
-                    </foreignObject>
-                ),
-                name: "Child One"
-            },
-            {
-                label: (
-                    <foreignObject y={-13} width="200" height="180" style={{display: "flex", justifyContent: "flex-start"}}>
-                        <span title={"123 \n123"}>Nene</span>
-                    </foreignObject>
-                ),
-                name: "Child Two"
-            }
-        ]
-    }
-
-
 
     return (
         <div>
