@@ -8,6 +8,7 @@ import Customize from "./Customize";
 import NodeMenu from "./NodeMenu";
 import API_DOMAIN from "../config";
 import Preload from "./Preload";
+import {logDOM} from "@testing-library/react";
 
 const SwitchesTree = () => {
     const [tree, setTree] = useState({})
@@ -253,18 +254,16 @@ const SwitchesTree = () => {
         }
     }
 
-    function onInputChange(event) {
-        const inputValue = event.target.value;
-        setFilter(inputValue)
-        if (inputValue !== "") {
+    const handlerFilterTree = () => {
+        if (filter !== "") {
             // filteredObjects = {name: "Root", children: filterTree(tree, inputValue)};
-            let result = filterTree(tree, inputValue)
+            let result = filterTree(tree, filter)
             if (result != null) {
-                setShownTree(filterTree(tree, inputValue))
+                setShownTree(filterTree(tree, filter))
             } else {
                 setShownTree({name: "Root", label: (
                         <text onClick={() => setShownTree(prevState => {
-                            return {...tree}
+                            return {...prevState}
                         })}>
                             Root
                         </text>
@@ -273,6 +272,12 @@ const SwitchesTree = () => {
         } else {
             setShownTree(tree)
         }
+    }
+
+    function onInputChange(event) {
+        const inputValue = event.target.value;
+        setFilter(inputValue)
+        handlerFilterTree()
     }
 
     const parseData = (data) => {
@@ -295,9 +300,11 @@ const SwitchesTree = () => {
             }
 
             setTree({name: "Root", label: (
-                    <text onClick={() => setTree(prevState => {
-                        return {...prevState}
-                    })}>
+                    <text onClick={() => {
+                        setTree(prevState => {
+                            return {...prevState}
+                        })
+                    }}>
                         Root
                     </text>
                 ), children: result})
@@ -306,7 +313,7 @@ const SwitchesTree = () => {
     }
 
     useEffect(() => {
-        setShownTree(tree)
+        handlerFilterTree()
     }, [tree])
 
     const handlerBuildTree = () => {
