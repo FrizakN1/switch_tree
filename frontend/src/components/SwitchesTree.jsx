@@ -30,6 +30,7 @@ const SwitchesTree = () => {
         BackgroundColor: "#242424",
         LineColor: "#2593B8"
     })
+    const [isBuilt, setIsBuilt] = useState(false)
 
     const size = {
         width: 4000 - pad,
@@ -71,9 +72,10 @@ const SwitchesTree = () => {
         const tree = {
             name: node.Name,
             label: (
-                <foreignObject y={-13} width={node.Name.length*param.FontSize/1.5} height={param.FontSize} >
-                    <span title={node.IPAddress+"\n"+node.Mac}>{node.Name}</span>
-                </foreignObject>
+                <text>
+                    <title>{node.IPAddress} | {node.Mac}</title>
+                    {node.Name}
+                </text>
             ),
             children: []
         };
@@ -115,6 +117,7 @@ const SwitchesTree = () => {
     }
 
     const handlerOnClick = (event, name) => {
+        setIsBuilt(false)
         let rootTree = tree
         if (filter !== "") {
             rootTree = filterTree(tree, filter)
@@ -135,6 +138,8 @@ const SwitchesTree = () => {
         } else {
             setShownTree(rootTree)
         }
+
+        setIsBuilt(true)
     }
 
     useEffect(() => {
@@ -263,6 +268,7 @@ const SwitchesTree = () => {
 
             setTree({name: "Root", label: "Root", children: result})
             setShownTree({name: "Root", label: "Root", children: result})
+            setIsBuilt(true)
         }
     }
 
@@ -384,28 +390,30 @@ const SwitchesTree = () => {
                  onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp} onMouseUp={handleMouseUp}
             >
 
-                <AnimatedTree
-                    labelProp={"label"}
-                    data={shownTree}
-                    gProps={{
-                        className: 'node',
-                        onClick: handlerOnClick,
-                    }}
-                    nodeProps={{
-                        r: 2,
-                    }}
+                {isBuilt &&
+                    <AnimatedTree
+                        labelProp={"label"}
+                        data={shownTree}
+                        gProps={{
+                            className: 'node',
+                            onClick: handlerOnClick,
+                        }}
+                        nodeProps={{
+                            r: 2,
+                        }}
 
-                    pathProps={{
-                        style: {stroke: param.LineColor}
-                    }}
+                        pathProps={{
+                            style: {stroke: param.LineColor}
+                        }}
 
-                    textProps={{
-                        style: {fill: param.FontColor}
-                    }}
-                    height={size.height}
-                    width={size.width}
-                    steps={30}
-                />
+                        textProps={{
+                            style: {fill: param.FontColor}
+                        }}
+                        height={size.height}
+                        width={size.width}
+                        steps={30}
+                    />
+                }
             </div>
         </div>
     )
