@@ -5,6 +5,8 @@ import SwitchCreate from "./SwitchCreate";
 import PasswordSet from "./PasswordSet";
 import FetchRequest from "../fetchRequest";
 import Customize from "./Customize";
+import {logDOM} from "@testing-library/react";
+import NodeTitle from "./NodeTitle";
 
 const SwitchesTree = () => {
     const [tree, setTree] = useState({})
@@ -70,6 +72,11 @@ const SwitchesTree = () => {
     const buildTree = (node, data) => {
         const tree = {
             name: node.Name,
+            label: (
+                <foreignObject y={-13} width={node.Name.length*param.FontSize/1.5} height={param.FontSize} >
+                    <span title={node.IPAddress+"\n"+node.Mac}>{node.Name}</span>
+                </foreignObject>
+            ),
             children: []
         };
 
@@ -121,6 +128,7 @@ const SwitchesTree = () => {
             if (result.parent) {
                 setShownTree({
                     name: result.parent.name,
+                    label: result.parent.label,
                     children: [result.node],
                 })
             } else {
@@ -196,6 +204,7 @@ const SwitchesTree = () => {
         } else if (node.children) {
             let filteredNode = {
                 name: node.name,
+                label: node.label,
                 children: [],
             }
 
@@ -228,7 +237,7 @@ const SwitchesTree = () => {
             if (result != null) {
                 setShownTree(filterTree(tree, inputValue))
             } else {
-                setShownTree({name: "Root", children: []})
+                setShownTree({name: "Root", label: "Root", children: []})
             }
         } else {
             setShownTree(tree)
@@ -241,9 +250,6 @@ const SwitchesTree = () => {
         for (const key in data) {
             if (data.hasOwnProperty(key)) {
                 const element = data[key];
-                if (element.length === 2) {
-                    console.log(element)
-                }
                 if (element.Parent == null) {
                     root.push(element);
                 }
@@ -257,8 +263,8 @@ const SwitchesTree = () => {
                 result.push(buildTree(item, data))
             }
 
-            setTree({name: "Root", children: result})
-            setShownTree({name: "Root", children: result})
+            setTree({name: "Root", label: "Root", children: result})
+            setShownTree({name: "Root", label: "Root", children: result})
         }
     }
 
@@ -292,11 +298,13 @@ const SwitchesTree = () => {
         if (node.name.toLowerCase().includes(switch1.toLowerCase()) || node.name.toLowerCase().includes(switch2.toLowerCase())) {
             return {
                 name: node.name,
+                label: node.label,
                 children: []
             }
         } else if (node.children) {
             let filteredNode = {
                 name: node.name,
+                label: node.label,
                 children: [],
             }
 
@@ -327,6 +335,31 @@ const SwitchesTree = () => {
     useEffect(() => {
         document.querySelector("#root").style.backgroundColor = param.BackgroundColor
     }, [param])
+
+    const test = {
+        name: "Parent",
+        label: "String",
+        children: [
+            {
+                label: (
+                    <foreignObject y={-13} width="200" height="180" style={{display: "flex", justifyContent: "flex-start"}}>
+                        <span title={"123 \n123"}>Туту</span>
+                    </foreignObject>
+                ),
+                name: "Child One"
+            },
+            {
+                label: (
+                    <foreignObject y={-13} width="200" height="180" style={{display: "flex", justifyContent: "flex-start"}}>
+                        <span title={"123 \n123"}>Nene</span>
+                    </foreignObject>
+                ),
+                name: "Child Two"
+            }
+        ]
+    }
+
+
 
     return (
         <div>
@@ -377,7 +410,9 @@ const SwitchesTree = () => {
                  style={{left: position.x + 'px', top: position.y + 'px', width: size.width+pad, transform: `scale(${scale})`, fontSize: `${param.FontSize}px`}}
                  onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp} onMouseUp={handleMouseUp}
             >
+
                 <AnimatedTree
+                    labelProp={"label"}
                     data={shownTree}
                     gProps={{
                         className: 'node',

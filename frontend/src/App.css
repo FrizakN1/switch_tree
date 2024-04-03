@@ -15,9 +15,9 @@ svg {
 }
 
 .node text {
-  background-color: #444;
   fill: #F4F4F4;
   user-select: none;
+  white-space: unset;
 }
 
 .node {
@@ -40,7 +40,6 @@ path.link {
 
 span {
   color: #F4F4F4;
-  float: right;
 }
 
 input {
@@ -207,4 +206,10 @@ input[type="color"] {
   outline: none;
   border-radius: unset;
   margin: unset;
+}
+
+.test {
+  /*position: absolute;*/
+  left: 880px;
+  top: 690px;
 }
