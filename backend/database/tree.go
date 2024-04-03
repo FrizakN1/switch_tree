@@ -17,6 +17,7 @@ type Switch struct {
 	Parent    *Switch
 	Community string
 	IsRoot    bool
+	NotPing   bool
 }
 
 type Aliases struct {

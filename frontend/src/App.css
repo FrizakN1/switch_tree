@@ -15,7 +15,6 @@ svg {
 }
 
 .node text {
-  fill: #F4F4F4;
   user-select: none;
   white-space: unset;
 }

@@ -6,6 +6,7 @@ import PasswordSet from "./PasswordSet";
 import FetchRequest from "../fetchRequest";
 import Customize from "./Customize";
 import NodeMenu from "./NodeMenu";
+import API_DOMAIN from "../config";
 
 const SwitchesTree = () => {
     const [tree, setTree] = useState({})
@@ -74,7 +75,7 @@ const SwitchesTree = () => {
         const tree = {
             name: node.Name,
             label: (
-                <text onClick={(e) => handlerOnClick(e, node)}>
+                <text fill={node.NotPing ? "#ff0000" : ""} onClick={(e) => handlerOnClick(e, node)}>
                     <title>{node.IPAddress} | {node.Mac}</title>
                     {node.Name}
                 </text>
@@ -365,6 +366,18 @@ const SwitchesTree = () => {
         document.querySelector("#root").style.backgroundColor = param.BackgroundColor
     }, [param])
 
+    const handlerPingSwitches = () => {
+        fetch(API_DOMAIN.HTTP+"/ping_switches")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                if (data != null) {
+                    parseData(data)
+                }
+            })
+            .catch(error => console.error(error))
+    }
+
     return (
         <div>
             {nodeMenu && <NodeMenu x={nodeMenu.x} y={nodeMenu.y} node={nodeMenu.Node} onClick={handlerOpenNode}/>}
@@ -400,6 +413,7 @@ const SwitchesTree = () => {
                 }
                 <div className="param">
                     <button onClick={() => setIsOpenParam(true)}>Кастомизация карты</button>
+                    <button onClick={handlerPingSwitches}>Ping</button>
                     {passwordExist ?
                         <div>
                             <button onClick={() => setIsOpenCreate(true)}>Добавить корневой коммутатор</button>
