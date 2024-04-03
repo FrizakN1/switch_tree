@@ -101,7 +101,7 @@ const SwitchesTree = () => {
     }
 
     const findTreeNode = (node, targetName, parent = null) => {
-        if (node.name.includes(targetName)) {
+        if (node.name === targetName) {
             return { node, parent };
         } else if (node.children) {
             for (const child of node.children) {
@@ -133,7 +133,7 @@ const SwitchesTree = () => {
                 setShownTree(result.node)
             }
         } else {
-            setShownTree(tree)
+            setShownTree(rootTree)
         }
     }
 
