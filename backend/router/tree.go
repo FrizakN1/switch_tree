@@ -263,7 +263,6 @@ func pingSwitch(ip string) bool {
 
 	pinger.Count = 1
 	pinger.Timeout = time.Second * 2
-	pinger.SetPrivileged(true)
 
 	pinger.OnRecv = func(pkt *ping.Packet) {
 		fmt.Printf("Received ping response from %s: RTT=%v\n", pkt.IPAddr, pkt.Rtt)
