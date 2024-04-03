@@ -1,10 +1,11 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 // import 'react-tree-graph/dist/style.css'
 import {AnimatedTree} from "react-tree-graph";
 import SwitchCreate from "./SwitchCreate";
 import PasswordSet from "./PasswordSet";
 import FetchRequest from "../fetchRequest";
 import Customize from "./Customize";
+import NodeMenu from "./NodeMenu";
 
 const SwitchesTree = () => {
     const [tree, setTree] = useState({})
@@ -30,7 +31,7 @@ const SwitchesTree = () => {
         BackgroundColor: "#242424",
         LineColor: "#2593B8"
     })
-    const [isBuilt, setIsBuilt] = useState(false)
+    const [nodeMenu, setNodeMenu] = useState(null)
 
     const size = {
         width: 4000 - pad,
@@ -39,6 +40,7 @@ const SwitchesTree = () => {
 
     const handleMouseDown = (event) => {
         if (event.target.tagName !== "text") {
+            setNodeMenu(null)
             document.querySelector(".tree-container").style.cursor = "grabbing"
             setIsDragging(true);
             setStartPosition({
@@ -72,7 +74,7 @@ const SwitchesTree = () => {
         const tree = {
             name: node.Name,
             label: (
-                <text>
+                <text onClick={(e) => handlerOnClick(e, node)}>
                     <title>{node.IPAddress} | {node.Mac}</title>
                     {node.Name}
                 </text>
@@ -116,8 +118,9 @@ const SwitchesTree = () => {
         return null;
     }
 
-    const handlerOnClick = (event, name) => {
-        setIsBuilt(false)
+    const handlerOpenNode = (name) => {
+        setNodeMenu(null)
+
         let rootTree = tree
         if (filter !== "") {
             rootTree = filterTree(tree, filter)
@@ -139,7 +142,14 @@ const SwitchesTree = () => {
             setShownTree(rootTree)
         }
 
-        setIsBuilt(true)
+    }
+
+    const handlerOnClick = (event, node) => {
+        setNodeMenu({
+            x: event.clientX,
+            y: event.clientY,
+            Node: node,
+        })
     }
 
     useEffect(() => {
@@ -181,6 +191,7 @@ const SwitchesTree = () => {
             })
 
         const handleWheel = (event) => {
+            setNodeMenu(null)
             if (event.deltaY > 0) {
                 setScale(prevState => {
                     if (prevState-0.04 > 0.2) {
@@ -240,7 +251,13 @@ const SwitchesTree = () => {
             if (result != null) {
                 setShownTree(filterTree(tree, inputValue))
             } else {
-                setShownTree({name: "Root", label: "Root", children: []})
+                setShownTree({name: "Root", label: (
+                        <text onClick={() => setShownTree(prevState => {
+                            return {...tree}
+                        })}>
+                            Root
+                        </text>
+                    ), children: []})
             }
         } else {
             setShownTree(tree)
@@ -266,11 +283,19 @@ const SwitchesTree = () => {
                 result.push(buildTree(item, data))
             }
 
-            setTree({name: "Root", label: "Root", children: result})
-            setShownTree({name: "Root", label: "Root", children: result})
-            setIsBuilt(true)
+            setTree({name: "Root", label: (
+                    <text onClick={() => setTree(prevState => {
+                        return {...prevState}
+                    })}>
+                        Root
+                    </text>
+                ), children: result})
         }
     }
+
+    useEffect(() => {
+        setShownTree(tree)
+    }, [tree])
 
     const handlerBuildTree = () => {
         let options = {
@@ -342,6 +367,7 @@ const SwitchesTree = () => {
 
     return (
         <div>
+            {nodeMenu && <NodeMenu x={nodeMenu.x} y={nodeMenu.y} node={nodeMenu.Node} onClick={handlerOpenNode}/>}
             {isOpenCreate && <SwitchCreate setIsOpen={setIsOpenCreate} />}
             {isOpenPassword && <PasswordSet setIsOpen={setIsOpenPassword} setPasswordExist={setPasswordExist} />}
             <header>
@@ -390,30 +416,27 @@ const SwitchesTree = () => {
                  onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp} onMouseUp={handleMouseUp}
             >
 
-                {isBuilt &&
-                    <AnimatedTree
-                        labelProp={"label"}
-                        data={shownTree}
-                        gProps={{
-                            className: 'node',
-                            onClick: handlerOnClick,
-                        }}
-                        nodeProps={{
-                            r: 2,
-                        }}
+                <AnimatedTree
+                    labelProp={"label"}
+                    data={shownTree}
+                    gProps={{
+                        className: 'node',
+                    }}
+                    nodeProps={{
+                        r: 2,
+                    }}
 
-                        pathProps={{
-                            style: {stroke: param.LineColor}
-                        }}
+                    pathProps={{
+                        style: {stroke: param.LineColor}
+                    }}
 
-                        textProps={{
-                            style: {fill: param.FontColor}
-                        }}
-                        height={size.height}
-                        width={size.width}
-                        steps={30}
-                    />
-                }
+                    textProps={{
+                        style: {fill: param.FontColor}
+                    }}
+                    height={size.height}
+                    width={size.width}
+                    steps={30}
+                />
             </div>
         </div>
     )

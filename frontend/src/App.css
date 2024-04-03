@@ -208,8 +208,25 @@ input[type="color"] {
   margin: unset;
 }
 
-.test {
-  /*position: absolute;*/
-  left: 880px;
-  top: 690px;
+.node-menu {
+  position: absolute;
+  display: flex;
+  color: #F3F3FF;
+  z-index: 10000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.node-menu div {
+  padding: 5px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition-duration: 200ms;
+  background-color: #444;
+  white-space: nowrap;
+}
+
+.node-menu div:hover {
+  background-color: #333;
 }
