@@ -307,7 +307,6 @@ const SwitchesTree = () => {
 
     useEffect(() => {
         setShownTree(tree)
-
     }, [tree])
 
     const handlerBuildTree = () => {
