@@ -7,6 +7,7 @@ import FetchRequest from "../fetchRequest";
 import Customize from "./Customize";
 import NodeMenu from "./NodeMenu";
 import API_DOMAIN from "../config";
+import Preload from "./Preload";
 
 const SwitchesTree = () => {
     const [tree, setTree] = useState({})
@@ -33,6 +34,7 @@ const SwitchesTree = () => {
         LineColor: "#2593B8"
     })
     const [nodeMenu, setNodeMenu] = useState(null)
+    const [isLoaded, setIsLoaded] = useState(false)
 
     const size = {
         width: 4000 - pad,
@@ -296,9 +298,11 @@ const SwitchesTree = () => {
 
     useEffect(() => {
         setShownTree(tree)
+        setIsLoaded(true)
     }, [tree])
 
     const handlerBuildTree = () => {
+        setIsLoaded(false)
         let options = {
             method: "GET",
             headers: {
@@ -367,6 +371,7 @@ const SwitchesTree = () => {
     }, [param])
 
     const handlerPingSwitches = () => {
+        setIsLoaded(false)
         fetch(API_DOMAIN.HTTP+"/ping_switches")
             .then(response => response.json())
             .then(data => {
@@ -425,33 +430,36 @@ const SwitchesTree = () => {
                 </div>
                 {isOpenParam && <Customize param={param} setParam={setParam} setIsOpen={setIsOpenParam}/>}
             </header>
-            <div className={"tree-container"}
-                 style={{left: position.x + 'px', top: position.y + 'px', width: size.width+pad, transform: `scale(${scale})`, fontSize: `${param.FontSize}px`}}
-                 onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp} onMouseUp={handleMouseUp}
-            >
+            {isLoaded ?
+                <div className={"tree-container"}
+                     style={{left: position.x + 'px', top: position.y + 'px', width: size.width+pad, transform: `scale(${scale})`, fontSize: `${param.FontSize}px`}}
+                     onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseLeave={handleMouseUp} onMouseUp={handleMouseUp}
+                >
+                    <AnimatedTree
+                        labelProp={"label"}
+                        data={shownTree}
+                        gProps={{
+                            className: 'node',
+                        }}
+                        nodeProps={{
+                            r: 2,
+                        }}
 
-                <AnimatedTree
-                    labelProp={"label"}
-                    data={shownTree}
-                    gProps={{
-                        className: 'node',
-                    }}
-                    nodeProps={{
-                        r: 2,
-                    }}
+                        pathProps={{
+                            style: {stroke: param.LineColor}
+                        }}
 
-                    pathProps={{
-                        style: {stroke: param.LineColor}
-                    }}
-
-                    textProps={{
-                        style: {fill: param.FontColor}
-                    }}
-                    height={size.height}
-                    width={size.width}
-                    steps={30}
-                />
-            </div>
+                        textProps={{
+                            style: {fill: param.FontColor}
+                        }}
+                        height={size.height}
+                        width={size.width}
+                        steps={30}
+                    />
+                </div>
+            :
+                <Preload />
+            }
         </div>
     )
 }
