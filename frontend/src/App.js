@@ -1,4 +1,4 @@
-import './App.css';
+import "./App.css"
 import SwitchesTree from "./components/SwitchesTree";
 
 function App() {

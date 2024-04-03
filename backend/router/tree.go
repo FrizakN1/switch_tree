@@ -3,14 +3,12 @@ package router
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-ping/ping"
 	g "github.com/gosnmp/gosnmp"
 	"log"
 	"strconv"
 	"strings"
 	"switch_tree/database"
 	"switch_tree/utils"
-	"time"
 )
 
 func handlerGetTree(c *gin.Context) {
@@ -233,56 +231,4 @@ func getLLDPNeighbors(_switch database.Switch, mapSwitches map[string]database.S
 	}
 
 	return nil
-}
-
-func handlerPingSwitches(c *gin.Context) {
-	mapSwitches := make(map[string]database.Switch)
-
-	err := database.GetTree(mapSwitches)
-	if err != nil {
-		log.Println(err)
-		c.JSON(400, nil)
-		c.Abort()
-		return
-	}
-
-	for key, _switch := range mapSwitches {
-		_switch.NotPing = pingSwitch(_switch.IPAddress)
-		mapSwitches[key] = _switch
-	}
-
-	c.JSON(200, mapSwitches)
-}
-
-func pingSwitch(ip string) bool {
-	pinger, err := ping.NewPinger(ip)
-	if err != nil {
-		fmt.Printf("Error creating pinger: %s\n", err.Error())
-		return true
-	}
-
-	pinger.Count = 1
-	pinger.Timeout = time.Second * 2
-
-	pinger.OnRecv = func(pkt *ping.Packet) {
-		fmt.Printf("Received ping response from %s: RTT=%v\n", pkt.IPAddr, pkt.Rtt)
-	}
-
-	notPing := false
-	pinger.OnFinish = func(stats *ping.Statistics) {
-		fmt.Printf("Ping statistics for %s: %d packets transmitted, %d packets received, %v%% packet loss\n",
-			stats.Addr, stats.PacketsSent, stats.PacketsRecv, stats.PacketLoss)
-		if stats.PacketsRecv == 0 {
-			notPing = true
-		}
-	}
-
-	fmt.Printf("Pinging %s...\n", ip)
-	err = pinger.Run()
-	if err != nil {
-		fmt.Printf("Error while pinging %s: %s\n", ip, err.Error())
-		return true
-	}
-
-	return notPing
 }

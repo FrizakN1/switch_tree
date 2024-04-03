@@ -3,10 +3,13 @@ package database
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"github.com/go-ping/ping"
 	g "github.com/gosnmp/gosnmp"
 	"log"
 	"strconv"
 	"switch_tree/utils"
+	"time"
 )
 
 type Switch struct {
@@ -104,10 +107,46 @@ func GetTree(mapSwitches map[string]Switch) error {
 			_switch.Parent = &Switch{ID: int(parentID.Int32)}
 		}
 
+		_switch.NotPing = pingSwitch(_switch.IPAddress)
+
 		mapSwitches[_switch.Mac] = _switch
 	}
 
 	return nil
+}
+
+func pingSwitch(ip string) bool {
+	pinger, err := ping.NewPinger(ip)
+	if err != nil {
+		fmt.Printf("Error creating pinger: %s\n", err.Error())
+		return true
+	}
+
+	pinger.Count = 1
+	pinger.Timeout = time.Second * 2
+	pinger.SetPrivileged(true)
+
+	pinger.OnRecv = func(pkt *ping.Packet) {
+		fmt.Printf("Received ping response from %s: RTT=%v\n", pkt.IPAddr, pkt.Rtt)
+	}
+
+	notPing := false
+	pinger.OnFinish = func(stats *ping.Statistics) {
+		fmt.Printf("Ping statistics for %s: %d packets transmitted, %d packets received, %v%% packet loss\n",
+			stats.Addr, stats.PacketsSent, stats.PacketsRecv, stats.PacketLoss)
+		if stats.PacketsRecv == 0 {
+			notPing = true
+		}
+	}
+
+	fmt.Printf("Pinging %s...\n", ip)
+	err = pinger.Run()
+	if err != nil {
+		fmt.Printf("Error while pinging %s: %s\n", ip, err.Error())
+		return true
+	}
+
+	return notPing
 }
 
 func GetRootSwitches() ([]Switch, error) {

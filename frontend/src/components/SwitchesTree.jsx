@@ -155,6 +155,21 @@ const SwitchesTree = () => {
         })
     }
 
+    const handlerGetTree = () => {
+        setIsLoaded(false)
+
+        let options = {
+            method: "GET"
+        }
+
+        FetchRequest("/get_tree", options)
+            .then(response => {
+                if (response.success) {
+                    parseData(response.data)
+                }
+            })
+    }
+
     useEffect(() => {
         let updatedParam = {...param}
 
@@ -182,16 +197,7 @@ const SwitchesTree = () => {
             }
         }
 
-        let options = {
-            method: "GET"
-        }
-
-        FetchRequest("/get_tree", options)
-            .then(response => {
-                if (response.success) {
-                    parseData(response.data)
-                }
-            })
+        handlerGetTree()
 
         const handleWheel = (event) => {
             setNodeMenu(null)
@@ -214,6 +220,8 @@ const SwitchesTree = () => {
             window.removeEventListener('mouseup', handleWheel);
         };
     }, [])
+
+
 
     const filterTree = (node, targetName) => {
         if (node.name.toLowerCase().includes(targetName.toLowerCase())) {
@@ -294,11 +302,12 @@ const SwitchesTree = () => {
                     </text>
                 ), children: result})
         }
+        setIsLoaded(true)
     }
 
     useEffect(() => {
         setShownTree(tree)
-        setIsLoaded(true)
+
     }, [tree])
 
     const handlerBuildTree = () => {
@@ -370,21 +379,22 @@ const SwitchesTree = () => {
         document.querySelector("#root").style.backgroundColor = param.BackgroundColor
     }, [param])
 
-    const handlerPingSwitches = () => {
-        setIsLoaded(false)
-        fetch(API_DOMAIN.HTTP+"/ping_switches")
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-                if (data != null) {
-                    parseData(data)
-                }
-            })
-            .catch(error => console.error(error))
-    }
+    // const handlerPingSwitches = () => {
+    //     setIsLoaded(false)
+    //     fetch(API_DOMAIN.HTTP+"/ping_switches")
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log(data)
+    //             if (data != null) {
+    //                 parseData(data)
+    //             }
+    //         })
+    //         .catch(error => console.error(error))
+    // }
 
     return (
         <div>
+
             {nodeMenu && <NodeMenu x={nodeMenu.x} y={nodeMenu.y} node={nodeMenu.Node} onClick={handlerOpenNode}/>}
             {isOpenCreate && <SwitchCreate setIsOpen={setIsOpenCreate} />}
             {isOpenPassword && <PasswordSet setIsOpen={setIsOpenPassword} setPasswordExist={setPasswordExist} />}
@@ -418,7 +428,7 @@ const SwitchesTree = () => {
                 }
                 <div className="param">
                     <button onClick={() => setIsOpenParam(true)}>Кастомизация карты</button>
-                    <button onClick={handlerPingSwitches}>Ping</button>
+                    <button onClick={handlerGetTree}>Ping</button>
                     {passwordExist ?
                         <div>
                             <button onClick={() => setIsOpenCreate(true)}>Добавить корневой коммутатор</button>

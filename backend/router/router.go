@@ -59,7 +59,6 @@ func Initialization(_config *settings.Setting) *gin.Engine {
 
 	routerAPI.POST("/check_password", handlerCheckPassword)
 	routerAPI.GET("/get_tree", handlerGetTree)
-	routerAPI.GET("/ping_switches", handlerPingSwitches)
 
 	routerAPI.Use(authMiddleware())
 
