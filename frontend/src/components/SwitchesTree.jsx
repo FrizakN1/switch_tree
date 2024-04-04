@@ -43,15 +43,13 @@ const SwitchesTree = () => {
     }
 
     const handleMouseDown = (event) => {
-        if (event.target.tagName !== "text") {
-            setNodeMenu(null)
-            document.querySelector(".tree-container").style.cursor = "grabbing"
-            setIsDragging(true);
-            setStartPosition({
-                x: event.clientX - position.x,
-                y: event.clientY - position.y
-            });
-        }
+        setNodeMenu(null)
+        document.querySelector(".tree-container").style.cursor = "grabbing"
+        setIsDragging(true);
+        setStartPosition({
+            x: event.clientX - position.x,
+            y: event.clientY - position.y
+        });
     };
 
     const handleMouseMove = (event) => {
